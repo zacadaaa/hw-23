@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, Response
 
 from utils import build_query
 from exceptions import QueryError, FilePathError
@@ -12,7 +12,7 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 
 
 @app.route("/perform_query", methods=["POST", "GET"])
-def perform_query():
+def perform_query() -> Response:
     data_name = request.args.get('file_name')
     cmd1 = request.args.get('cmd1')
     value1 = request.args.get('value1')
@@ -31,6 +31,4 @@ def perform_query():
         if cmd2 and value2:
             result = build_query(cmd2, value2, result)
 
-        result = "\n".join(result)
-
-    return app.response_class(result, content_type="text/plain")
+    return app.response_class("\n".join(result), content_type="text/plain")
